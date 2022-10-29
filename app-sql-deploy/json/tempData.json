@@ -1,0 +1,24 @@
+{
+    "projectname": [
+       "SyncKonsumenku" 
+    ],
+    "schema": [
+        "MPMHC3"
+    ],
+    "table": [
+        "MPMHC3SURVEY",
+        "MPMHC3SURVEYPERTANYAAN",
+        "MPMHC3OPSIJAWABAN",
+        "MPMHC3SETTINGMESSAGE",
+        "MPMHC3SETTINGMESSAGEDETAIL"
+    ],
+    "storedprocedure": [
+        "MPM_SP_INSERTSWEEPERLINE"
+    ],
+    "menu_id": [
+        
+    ],
+    "folderprojects": [
+
+    ]
+}

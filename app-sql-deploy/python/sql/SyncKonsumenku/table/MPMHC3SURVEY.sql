@@ -1,0 +1,14 @@
+USE MPMHC3
+
+ CREATE TABLE MPMHC3SURVEY ( 
+ SURVEYID uniqueidentifier NULL,
+ JUDUL varchar(200) NULL,
+ DESKRIPSI varchar(1000) NULL,
+ BANNERPATH varchar(500) NULL,
+ TGLBERLAKU datetime NULL,
+ CREATEBY varchar(25) NULL,
+ CREATEDATE datetime NULL,
+ MODIFBY varchar(25) NULL,
+ MODIFDATE datetime NULL,
+ SHORTID varchar(30) NULL
+);

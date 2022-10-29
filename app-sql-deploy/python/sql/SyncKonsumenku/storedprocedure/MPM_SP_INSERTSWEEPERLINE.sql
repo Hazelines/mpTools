@@ -1,0 +1,52 @@
+USE MPMHC3
+
+CREATE procedure [dbo].[MPM_SP_INSERTSWEEPERLINE] @sweeperid varchar(15), @STATUS_PERBAIKAN int , @tglawal Datetime, @tglakhir Datetime, 
+@USERSESSION VARCHAR(5), @STSSWEEPER INT, @STATUSID varchar(20)
+AS
+BEGIN
+
+("IF(@STATUS_PERBAIKAN = 0 AND @STSSWEEPER = 0 AND @STATUSID <> '0')",)
+BEGIN
+INSERT INTO MPMVERIFY_SWEEPERLINE (IDSWEEPER,IDCUSTOMER,IDHISTORY,NOMESIN,STATUS,STSVERIFYSWEEPER,CREATEBY,CREATEDATE)
+select @SWEEPERID, his.idcustomer, his.idhistory, fak.nomesin, 0,0, @USERSESSION, getdate() from MPMVERIFY_FAKTUR fak
+join MPMVERIFY_HISTORYVERIFIKASI (NOLOCK) his on fak.idcustomer = his.idcustomer
+JOIN MPMVERIFY_STATUSLINE (NOLOCK) a on his.statuslineid = a.statuslineid
+join MPMVERIFY_STATUS (NOLOCK) c on a.statusid = c.statusid
+where fak.TANGGALFAKTUR <= @tglakhir and fak.TANGGALFAKTUR >= @tglawal
+and fak.STSDCV = 0  and c.stsvalid = 0 and fak.stsproses = 1
+and his.DATEVERIFIKASI =(SELECT MAX(DATEVERIFIKASI) FROM MPMverify_historyverifikasi WHERE his.idcustomer = idcustomer)
+and cast(his.dateverifikasi as date) <=  cast(DATEADD(dd, -1 - (select cast(TAG_1 as int) FROM [MPMIT].[dbo].MPM_SETTING_DETAIL
+(" where KEY_TAG_2 = 'BTS_WAKTU_DEALER') , getdate()) as date)",)
+and c.statusid = @STATUSID
+group by his.idcustomer, his.idhistory, fak.nomesin
+END
+("ELSE IF(@STATUS_PERBAIKAN = 1 AND @STSSWEEPER = 0 AND @STATUSID <> '0')",)
+BEGIN
+INSERT INTO MPMVERIFY_SWEEPERLINE (IDSWEEPER,IDCUSTOMER,IDHISTORY,NOMESIN,STATUS,STSVERIFYSWEEPER,CREATEBY,CREATEDATE)
+select @SWEEPERID, his.idcustomer, his.idhistory, fak.nomesin, 0,0, @USERSESSION, getdate() from MPMVERIFY_FAKTUR fak
+join MPMVERIFY_HISTORYVERIFIKASI (NOLOCK) his on fak.idcustomer = his.idcustomer
+JOIN MPMVERIFY_HISTORYCORRECTION (NOLOCK) COR ON HIS.IDCUSTOMER = COR.IDCUSTOMER
+JOIN MPMVERIFY_STATUSLINE (NOLOCK) a on his.statuslineid = a.statuslineid
+join MPMVERIFY_STATUS (NOLOCK) c on a.statusid = c.statusid
+where fak.TANGGALFAKTUR <= @tglakhir and fak.TANGGALFAKTUR >= @tglawal
+and fak.STSDCV = 0 AND COR.STSCORRECTBY = 0 and c.stsvalid = 0 and (fak.stsproses = 2 or fak.stsproses = 3)
+
+and his.DATEVERIFIKASI = (SELECT MAX(DATEVERIFIKASI) FROM MPMverify_historyverifikasi WHERE his.idcustomer = idcustomer)
+and c.statusid = @STATUSID
+group by his.idcustomer, his.idhistory, fak.nomesin
+END
+("ELSE IF(@STSSWEEPER = 2 AND @STATUSID = '0')",)
+BEGIN
+INSERT INTO MPMVERIFY_SWEEPERLINE (IDSWEEPER,IDCUSTOMER,IDHISTORY,NOMESIN,STATUS,STSVERIFYSWEEPER,CREATEBY,CREATEDATE)
+select @SWEEPERID,IDCUSTOMER,IDHISTORY,NOMESIN,1,0,@USERSESSION,getdate() FROM MPMVERIFY_SWEEPERLINE A
+WHERE A.IDCUSTOMER NOT IN 
+(SELECT IDCUSTOMER FROM MPMVERIFY_SWEEPERLINE (NOLOCK) WHERE STATUS = 1 AND STSVERIFYSWEEPER = 1 AND A.IDSWEEPER = IDSWEEPER AND A.NOMESIN = NOMESIN)
+--and A.IDCUSTOMER NOT IN (SELECT IDCUSTOMER FROM MPMVERIFY_SWEEPERLINE WHERE STATUS = 1 AND STSVERIFYSWEEPER = 0 AND A.IDSWEEPER = IDSWEEPER AND A.NOMESIN = NOMESIN)
+AND IDSWEEPER = @sweeperid 
+group by IDCUSTOMER,IDHISTORY,NOMESIN
+END
+
+
+
+END
+

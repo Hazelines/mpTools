@@ -1,0 +1,15 @@
+USE MPMHC3
+
+ CREATE TABLE MPMHC3SETTINGMESSAGE ( 
+ NAMESPACE varchar(1000) NULL,
+ SURVEYID uniqueidentifier NULL,
+ SUBJECTMESSAGE varchar(200) NULL,
+ SETTINGID uniqueidentifier NULL,
+ ISAKTIF int NULL,
+ NAME varchar(100) NULL,
+ TYPE varchar(100) NULL,
+ CREATEBY varchar(25) NULL,
+ CREATEDATE datetime NULL,
+ MODIFBY varchar(25) NULL,
+ MODIFDATE datetime NULL
+);

@@ -1,0 +1,12 @@
+USE MPMHC3
+
+ CREATE TABLE MPMHC3OPSIJAWABAN ( 
+ OPSIJAWABANID uniqueidentifier NULL,
+ OPSIJAWABAN varchar(100) NULL,
+ PERTANYAANID uniqueidentifier NULL,
+ SURVEYID uniqueidentifier NULL,
+ CREATEBY varchar(25) NULL,
+ CREATEDATE datetime NULL,
+ MODIFBY varchar(25) NULL,
+ MODIFDATE datetime NULL
+);
